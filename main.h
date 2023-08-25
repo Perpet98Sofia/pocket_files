@@ -17,7 +17,8 @@
 #include <signal.h>
 #include <errno.h>
 
-void handle_sigint(int sig);
+#define UNUSED(x) (void)(x)
+
 void _split_line(char *line, char *argv[]);
 char *find_cmd(const char *buffer);
 char *find_executable(const char *command, char **envp);
@@ -26,7 +27,9 @@ void built_in_exit(char *args[]);
 int _strncmp(char *s1, char *s2, int n);
 char *_strdup(char *str);
 int _strcmp(char *s1, char *s2);
+char *_strcpy(char *dest, char *src);
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
+void execute(char *command, char **args);
 
 #endif
