@@ -1,7 +1,11 @@
 #include "main.h"
 /**
  * main - entry point
- *
+ * ac - argument count
+ * av - array of argument strings
+ * envp - array of environment variables
+ * return = 0 
+ */
 
 int main(int ac, char **av, char *envp[])
 {
