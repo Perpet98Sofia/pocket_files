@@ -1,4 +1,11 @@
 #include "main.h"
+/**
+ * main - entry point
+ * ac - argument count
+ * av - array of argument strings
+ * envp - array of environment variables
+ * return = 0 
+ */
 
 int main(int ac, char **av, char *envp[])
 {
@@ -26,7 +33,7 @@ int main(int ac, char **av, char *envp[])
 
         _split_line(input, args);
 
-        // Check for exit built-in command
+        /* Check for exit built-in command */
         if (_strcmp(args[0], "exit") == 0)
             built_in_exit(args);
         if (_strcmp(args[0], "env") == 0)
@@ -39,7 +46,7 @@ int main(int ac, char **av, char *envp[])
             continue;
         }
 
-        // Check if the command is executable
+        /* Check if the command is executable */
         if (access(input, X_OK) == 0)
             found = 1;
 		else
