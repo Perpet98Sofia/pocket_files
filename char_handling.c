@@ -23,30 +23,35 @@ int _strncmp(char *s1, char *s2, int n)
 }
 
 /**
- * _strdup - return a copy of the string given as a parameter
- * @str: the string given
- *
- * Return: a pointer
+ * _strdup - returns a pointer to a newly allocated space in memory,
+ * which contains a copy of the string given as a parameter
+ * @str: string to duplicate
+ * Return: pointer to duplicated string in allocated memory
  */
 char *_strdup(char *str)
 {
-	int n = 0, i;
-	char *buffer;
+	char *duplicate_str;
+	int i, len = 0;
 
-	if (str == NULL)
-		return (NULL);
-	while (str[n] != '\0')
-		n++;
-
-	buffer = (char *)malloc((n * sizeof(char)) + 1);
-	if (buffer == NULL)
+	if (str == NULL) /* validate str input */
 		return (NULL);
 
-	for (i = 0; i < n; i++)
-		buffer[i] = str[i];
-	buffer[n] = '\0';
+	while (*(str + len))
+		len++;
+	len++; /* add null terminator to length */
 
-	return (buffer);
+	duplicate_str = malloc(sizeof(char) * len); /* allocate memory */
+	if (duplicate_str == NULL)
+		return (NULL);
+
+	i = 0;
+	while (i < len)
+	{
+		*(duplicate_str + i) = *(str + i);
+		i++;
+	}
+
+	return (duplicate_str);
 }
 
 /**
@@ -86,4 +91,30 @@ char *_strcpy(char *dest, char *src)
 	dest[x] = '\0';
 
 	return (dest);
+}
+
+/**
+ * trim - Trim a string
+ * @str: the string
+ *
+ * Return: void
+*/
+char *trim(char *str)
+{
+	int start = 0, end = _strlen(str) - 1, i, j = 0;
+	char *trimmed;
+
+	trimmed = malloc(_strlen(str) + 1);
+	if (trimmed == NULL)
+		return (NULL);
+	while (str[start] == ' ')
+		start++;
+	while (end >= start && (str[end] == ' ' || str[end] == '\n'))
+		end--;
+
+	for (i = start; i <= end; i++)
+		trimmed[j++] = str[i];
+	trimmed[j] = '\0';
+
+	return (trimmed);
 }

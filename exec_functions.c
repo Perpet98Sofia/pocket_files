@@ -1,75 +1,52 @@
 #include "main.h"
 
 /**
- * find_cmd - Finds the main command in a string
- * @buffer: String to search in
- *
- * Return: The command found
- */
-char *find_cmd(const char *buffer)
-{
-	int len = strlen(buffer), i = 0;
-	char *cmd;
-
-	cmd = malloc(len + 1);
-	if (cmd == NULL)
-		return (NULL);
-	while (*buffer && *buffer != ' ')
-	{
-		cmd[i] = *buffer;
-		buffer++;
-		i++;
-	}
-	cmd[i] = '\0';
-
-	return (cmd);
-}
-
-/**
  * find_executable - Finds the executable
  * @command: Parameter
  * @envp: Environment
  *
  * Return: The executable if found, NULL otherwise
  */
-char *find_executable(const char *command, char **envp)
+char *find_executable(char *command, char **envp)
 {
-	char *path_env = NULL, *token, *full_path = NULL;
+	char *path_env = NULL, *token = NULL, *full_path = NULL;
 	size_t token_len = 0, command_len = 0;
 	int i;
 
-	for (i = 0; envp[i] != NULL; i++)
+	for (i = 0; envp[i] != NULL && path_env == NULL; i++)
 	{
-		if (strncmp(envp[i], "PATH=", 5) == 0)
-		{
-			path_env = envp[i] + 5;
-			break;
-		}
+		if (_strncmp(envp[i], "PATH=", 5) == 0)
+			path_env = _strdup(envp[i] + 5);
 	}
-
-	if (path_env)
+	if (path_env != NULL)
 	{
-		token = strtok(strdup(path_env), ":");
+		token = strtok(_strdup(path_env), ":");
 		while (token)
 		{
-			token_len = strlen(token);
-			command_len = strlen(command);
+			token_len = _strlen(token);
+			command_len = _strlen(command);
 			full_path = malloc(token_len + command_len + 2);
 			if (full_path)
 			{
-				strcpy(full_path, token);
+				_strcpy(full_path, token);
 				full_path[token_len] = '/';
-				strcpy(full_path + token_len + 1, command);
+				_strcpy(full_path + token_len + 1, command);
 				full_path[token_len + command_len + 1] = '\0';
 				if (access(full_path, X_OK) == 0)
+				{
+					free(path_env);
 					return (full_path);
+				}
 				free(full_path);
 			}
+			else
+				return (NULL);
 			token = strtok(NULL, ":");
 		}
 		free(token);
 	}
-
+	if (path_env)
+		free(path_env);
 	return (NULL);
 }
 
@@ -88,7 +65,7 @@ char *make_cmd(char *entry, char *exec)
 	res = malloc(sizeof(char) * MAX_COMMAND_LENGTH);
 	if (res == NULL)
 		return (NULL);
-	arg = strrchr(entry, ' ');
+	arg = _strrchr(entry, ' ');
 	while (exec[i])
 	{
 		res[i] = exec[i];
