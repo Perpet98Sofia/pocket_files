@@ -59,7 +59,7 @@ char *_strdup(char *str)
  * @s1: char*
  * @s2: char*
  *
- * Return: 0 (s1 == s2 || c == n) -1 otherwise
+ * Return: 0 (s1 == s2) -1 otherwise
  */
 int _strcmp(char *s1, char *s2)
 {
