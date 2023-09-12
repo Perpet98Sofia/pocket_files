@@ -80,6 +80,7 @@ int execute(char *command, char **args, char *envp[])
 	else
 	{
 		perror("./shell: 1");
+		exit(127);
 		return (-1);
 	}
 	return (0);
