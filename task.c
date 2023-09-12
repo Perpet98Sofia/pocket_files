@@ -12,13 +12,18 @@ int main(int ac, char **av, char *env[])
 {
 	size_t buf_size = 0;
 	char *args[MAX_ARGS], *command = NULL;
-	int is_interact = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO));
+	int is_interact = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)), k = 0;
 
 	UNUSED(ac);
 	UNUSED(av);
 	UNUSED(env);
 	while (1)
 	{
+		while (args[k])
+		{
+			args[k] = NULL;
+			k++;
+		}
 		fflush(stdout);
 		if (is_interact)
 			printf("$ "); /* Display the prompt */
