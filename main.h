@@ -31,30 +31,49 @@ typedef struct list
 
 } list_t;
 
+/**
+ * struct builtin - structure for builtin functions
+ * @name: builtin function name
+ * @f: function
+*/
+typedef struct builtin
+{
+	char *name;
+	int (*f)(char **, char **);
+} builtin_t;
+
+/* ------------------------------------------------ */
+int get_builtin(char *cmd, char **args, char *env[]);
+int builtin_env(char **args, char *env[]);
+int built_in_exit(char **args, char *env[]);
+int built_in_setenv(char **args, char *env[]);
+int built_in_unsetenv(char **args, char *env[]);
+int cd_shell(char **args, char *env[]);
+int get_help(char **args, char *env[]);
+/* ------------------------------------------------ */
+
 void _split_line(char *line, char *argv[]);
 char *find_cmd(const char *buffer);
 char *find_executable(char *command, char **envp);
 char *make_cmd(char *entry, char *exec);
-void built_in_exit(char *args[]);
 int _strncmp(char *s1, char *s2, int n);
 char *_strdup(char *str);
 int _strcmp(char *s1, char *s2);
 char *_strcpy(char *dest, char *src);
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
-int find_env(list_t *env, char *str);
 int _unsetenv(list_t **env, char **str);
 int _setenv(list_t **env, char **str);
 void free_double_ptr(char **str);
 char *_strcat(char *dest, char *src);
-void execute(char *command, char **args, char *envp[]);
+int execute(char *command, char **args, char *envp[]);
 char *trim(char *str);
 char *make_cmd(char *entry, char *exec);
 void free_all(char *strng, char *strg);
 char *_strrchr(char *str, int c);
 int _strncmp(char *s1, char *s2, int n);
 int _strlen(char *s);
-char *_which(char *str, char *env[]);
-
+int is_digit(char c);
+int is_number(char *c);
 
 #endif

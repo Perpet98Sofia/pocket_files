@@ -12,6 +12,13 @@ void _split_line(char *line, char *argv[])
 {
 	int i = 0;
 
+	while (argv[i])
+	{
+		argv[i] = "\0";
+		i++;
+	}
+	i = 0;
+
 	argv[i] = strtok(line, " \n");
 	while (argv[i] != NULL)
 	{

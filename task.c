@@ -16,11 +16,12 @@ int main(int ac, char **av, char *env[])
 
 	UNUSED(ac);
 	UNUSED(av);
+	UNUSED(env);
 	while (1)
 	{
+		fflush(stdout);
 		if (is_interact)
 			printf("$ "); /* Display the prompt */
-		fflush(stdout);
 		if (getline(&command, &buf_size, stdin) == -1)
 		{
 			if (feof(stdin))
@@ -29,8 +30,9 @@ int main(int ac, char **av, char *env[])
 		}
 		if (_strlen(command) == 1)
 			continue;
-		command[_strlen(command) - 1] = '\0';
-		execute(command, args, env);
+		_split_line(command, args);
+		command[_strlen(command)] = '\0';
+		get_builtin(command, args, env);
 	}
 
 	return (0);
@@ -42,15 +44,14 @@ int main(int ac, char **av, char *env[])
  * @args: command arguments
  * @envp: environment
  *
- * Return: void
+ * Return: 0 for success, -1 for failure
  */
-void execute(char *command, char **args, char *envp[])
+int execute(char *command, char **args, char *envp[])
 {
 	pid_t pid;
 	int status, found = 0;
 	char *exec, *abs_cmd;
 
-	_split_line(command, args);
 	if (access(args[0], X_OK) == 0)
 		found = 1;
 	else
@@ -67,17 +68,19 @@ void execute(char *command, char **args, char *envp[])
 	{
 		pid = fork();  /* Fork a new process */
 		if (pid == 0)
-		{
-			execve(args[0], args, NULL);
-			perror("./shell: 2");
-			free(command);
-			exit(1);
-		}
+			return (execve(args[0], args, NULL));
 		else if (pid > 0) /* Wait for the child process to complete */
 			waitpid(pid, &status, 0);
 		else
+		{
 			perror("./shell: 0");
+			return (-1);
+		}
 	}
 	else
+	{
 		perror("./shell: 1");
+		return (-1);
+	}
+	return (0);
 }
