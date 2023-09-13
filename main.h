@@ -52,7 +52,10 @@ int cd_shell(char **args, char *env[]);
 int get_help(char **args, char *env[]);
 /* ------------------------------------------------ */
 
-void _split_line(char *line, char *argv[]);
+char **find_end_env(char *environ[]);
+char *_getenv(char **args, char *env[]);
+void divide_string(char *string, char **variable, char **value);
+
 char *find_cmd(const char *buffer);
 char *find_executable(char *command, char **envp);
 char *make_cmd(char *entry, char *exec);
@@ -63,7 +66,6 @@ char *_strcpy(char *dest, char *src);
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 int _unsetenv(list_t **env, char **str);
-int _setenv(list_t **env, char **str);
 void free_double_ptr(char **str);
 char *_strcat(char *dest, char *src);
 int execute(char *command, char **args, char *envp[]);
