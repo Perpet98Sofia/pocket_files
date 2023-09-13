@@ -12,7 +12,7 @@ int main(int ac, char **av, char *env[])
 {
 	size_t buf_size = 0;
 	char *args[MAX_ARGS], *command = NULL;
-	int is_interact = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO));
+	int is_interact = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)), i;
 
 	UNUSED(ac);
 	UNUSED(av);
@@ -30,7 +30,16 @@ int main(int ac, char **av, char *env[])
 		}
 		if (_strlen(command) == 1)
 			continue;
-		_split_line(command, args);
+		i = 0;
+
+		args[i] = strtok(command, " \n");
+		while (args[i] != NULL)
+		{
+			i++;
+			args[i] = strtok(NULL, " \n");
+		}
+		args[i] = NULL;
+
 		command[_strlen(command)] = '\0';
 		get_builtin(command, args, env);
 	}
@@ -72,16 +81,12 @@ int execute(char *command, char **args, char *envp[])
 		else if (pid > 0) /* Wait for the child process to complete */
 			waitpid(pid, &status, 0);
 		else
-		{
-			perror("./shell: 0");
-			return (-1);
-		}
+			perror("./hsh: 0");
 	}
 	else
 	{
-		perror("./shell: 1");
+		perror("./hsh: 1");
 		exit(127);
-		return (-1);
 	}
 	return (0);
 }

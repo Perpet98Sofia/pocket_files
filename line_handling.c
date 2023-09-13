@@ -1,34 +1,6 @@
 #include "main.h"
 
 /**
- * _split_line - split a line into strings separated
- *
- * @line: the line to split
- * @argv: the variable where the strings will be stored
- *
- * Return: void
- */
-void _split_line(char *line, char *argv[])
-{
-	int i = 0;
-
-	while (argv[i])
-	{
-		argv[i] = "\0";
-		i++;
-	}
-	i = 0;
-
-	argv[i] = strtok(line, " \n");
-	while (argv[i] != NULL)
-	{
-		i++;
-		argv[i] = strtok(NULL, " \n");
-	}
-	argv[i] = NULL;
-}
-
-/**
  * free_all - Frees all resources
  * @strng: string to free
  * @strg: string to free
@@ -74,4 +46,18 @@ int _strlen(char *s)
 	if (*s)
 		return (1 + _strlen(s + 1));
 	return (0);
+}
+
+/**
+ * divide_string - Function to divide a string
+ */
+void divide_string(char *string, char **variable, char **value)
+{
+	char *split = strchr(string, '=');
+
+	if (split == NULL)
+		return;
+
+	*variable = string;
+	*value = split + 1;
 }
