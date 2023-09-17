@@ -34,7 +34,6 @@ void update_value(data_shell command, char *varname, char *value)
 	command.av[2] = NULL;
 
     built_in_setenv(command);
-
 	for (k = 0; command.av[k] != NULL; k++)
         free(command.av[k]);
 }
