@@ -69,7 +69,7 @@ char *error_get_cd(char **args, char *cmd, int counter)
 	length += _strlen(ver_str) + _strlen(msg) + len_id + 5;
 	error = malloc(sizeof(char) * (length + 1));
 
-	if (error == NULL) // Change error check from '0' to 'NULL' for clarity.
+	if (error == NULL) /* Change error check from '0' to 'NULL' for clarity. */
 	{
 		free(ver_str);
 		return (NULL);
@@ -174,9 +174,9 @@ char *error_env(char **args, char *cmd, int counter)
 	length = _strlen(cmd) + _strlen(ver_str) + _strlen(args[0]) + _strlen(msg) + 4;
 	error = malloc(sizeof(char) * (length + 1));
 
-	if (error == NULL)  // Using NULL for clarity instead of '0'.
+	if (error == NULL)  /* Using NULL for clarity instead of '0'. */
 	{
-		// If error is NULL (malloc failed), there's no need to free it.
+		/* If error is NULL (malloc failed), there's no need to free it. */
 		free(ver_str);
 		return (NULL);
 	}
@@ -213,9 +213,9 @@ char *error_path_126(char **args, char *cmd, int counter)
 	length = _strlen(cmd) + _strlen(ver_str) + _strlen(args[0]) + 24;
 	error = malloc(sizeof(char) * (length + 1));
 
-	if (error == NULL) // Using NULL for clarity instead of '0'.
+	if (error == NULL) /* Using NULL for clarity instead of '0'. */
 	{
-		// If error is NULL (malloc failed), there's no need to free it.
+		/* If error is NULL (malloc failed), there's no need to free it. */
 		free(ver_str);
 		return (NULL);
 	}
