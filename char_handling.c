@@ -31,25 +31,22 @@ int _strncmp(char *s1, char *s2, int n)
 char *_strdup(char *str)
 {
 	char *duplicate_str;
-	int i, len = 0;
+	int i, len;
 
 	if (str == NULL) /* validate str input */
 		return (NULL);
 
-	while (*(str + len))
-		len++;
-	len++; /* add null terminator to length */
-
-	duplicate_str = malloc(sizeof(char) * len); /* allocate memory */
+	len = _strlen(str) + 1;
+	duplicate_str = malloc(len);
 	if (duplicate_str == NULL)
 		return (NULL);
 
-	i = 0;
-	while (i < len)
-	{
-		*(duplicate_str + i) = *(str + i);
-		i++;
-	}
+	/**
+	 * Iterate over each character in the string
+	 * and copy it to the duplicate string
+	 */
+	for (i = 0; i < len; i++)
+		duplicate_str[i] = str[i];
 
 	return (duplicate_str);
 }
@@ -98,7 +95,7 @@ char *_strcpy(char *dest, char *src)
  * @str: the string
  *
  * Return: void
-*/
+ */
 char *trim(char *str)
 {
 	int start = 0, end = _strlen(str) - 1, i, j = 0;
