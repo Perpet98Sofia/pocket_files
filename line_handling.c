@@ -49,15 +49,17 @@ int _strlen(char *s)
 }
 
 /**
- * divide_string - Function to divide a string
+ * extract - Function to extract a string
  */
-void divide_string(char *string, char **variable, char **value)
+char *extract(char *string, int start_index, int end_index)
 {
-	char *split = strchr(string, '=');
+    char *substring = malloc(sizeof(char) * (end_index - start_index + 1));
 
-	if (split == NULL)
-		return;
+    if (substring == NULL)
+        return NULL;
 
-	*variable = string;
-	*value = split + 1;
+    strncpy(substring, string + start_index, end_index - start_index + 1);
+    substring[end_index - start_index + 1] = '\0';
+
+    return (substring);
 }

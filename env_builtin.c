@@ -3,59 +3,69 @@
 /**
  * built_in_setenv - Function to set an environment variable
  */
-int built_in_setenv(char **args, char *env[])
+int built_in_setenv(data_shell command)
 {
-	char **end_env = find_end_env(env), *varname = NULL, *value = NULL;
-	char **var = env, *new_env;
+	char **end_env = find_end_env(command._environ), *varname = NULL, *value = NULL;
+	char **var = command._environ, *new_var, *var_cpy;
 
-	divide_string(args[1], &varname, &value);
-
-	for (; var < end_env; var++)
+	if ((varname = command.av[0]) && (value = command.av[1]))
 	{
-		if (strcmp(*var, varname) == 0)
+		for (; var < end_env; var++)
 		{
-			*var = realloc(*var, strlen(varname) + strlen(value) + 2);
-			strcpy(*var, varname);
-			strcat(*var, "=");
-			strcat(*var, value);
-			return (0);
+			var_cpy = extract(*var, 0, (int)strlen(varname) - 1);
+			if (strcmp(var_cpy, varname) == 0)
+			{
+				*var = malloc(strlen(varname) + strlen(value) + 2);
+				if (*var == NULL)
+					return (-1);
+				strcpy(*var, varname);
+				strcat(*var, "=");
+				strcat(*var, value);
+				return (0);
+			}
 		}
+		/* If the variable name does not exist, create a new entry */
+		new_var = malloc(strlen(varname) + strlen(value) + 2);
+		if (new_var == NULL)
+			return (-1);
+		strcpy(new_var, varname);
+		strcat(new_var, "=");
+		strcat(new_var, value);
+		/* Append the new entry to the environment variables */
+		*end_env = malloc(sizeof(char *) * (size_t)(sizeof(end_env) + 1));
+		if (*end_env == NULL)
+			return (-1);
+		*end_env = strdup(new_var);
+		end_env++;
+		*end_env = NULL;
+		return (0);
 	}
 
-	/* If the variable name does not exist, create a new entry */
-	new_env = malloc(strlen(varname) + strlen(value) + 2);
-	if (new_env == NULL)
-		return (-1);
-	strcpy(new_env, varname);
-	strcat(new_env, "=");
-	strcat(new_env, value);
-
-	/* Append the new entry to the environment variables */
-	end_env = realloc(end_env, sizeof(char *) * (size_t)(sizeof(end_env) + 1));
-	end_env[sizeof(end_env) - 1] = new_env;
-	return (0);
+	command.status = -1;
+	get_error(command.args, command.status, command.counter);
+	return (-1);
 }
 
 /**
  * _getenv - Function to get the value of an environment variable
  */
-char *_getenv(char **args, char *env[])
+char *_getenv(char *arg, char *env[])
 {
 	char **var = env;
 
 	/* Iterate over the environment variables until the end */
 	for (; var < find_end_env(env); var++)
 	{
-		if (strcmp(*env, args[1]) == 0)
-			return (*env + strlen(args[1]) + 1);
+		if (strcmp(*env, arg) == 0)
+			return (*env + strlen(arg) + 1);
 	}
 
 	return (NULL);
 }
 
 /**
- * find_end_env - Recursive function to find the end of the environment variables
-*/
+ * find_end_env - Function to find the end of the environment variables
+ */
 char **find_end_env(char *environ[])
 {
 	char **env_line = environ;
@@ -66,48 +76,43 @@ char **find_end_env(char *environ[])
 	return (env_line);
 }
 
-
 /**
  * builtin_env - env built-in
  * @env: Environment
  *
  * Return: Always 0
  */
-int builtin_env(char **args, char *env[])
+int builtin_env(data_shell command)
 {
 	int i;
 
-	UNUSED(args);
-
-	for (i = 0; env[i]; i++)
-		printf("%s\n", env[i]);
+	for (i = 0; command._environ[i]; i++)
+		printf("%s\n", command._environ[i]);
 
 	return (0);
 }
 
 /**
  * built_in_unsetenv - Function to unset an environment variable
-*/
-int built_in_unsetenv(char **args, char *env[])
+ */
+int built_in_unsetenv(data_shell command)
 {
-	char **envp = env;
-	char **prev = NULL;
-	int found = 0;
+	char **envp = command._environ, *var, *name, *value;
 
 	while (*envp)
 	{
-		if (strcmp(*envp, args[1]) == 0)
+		name = *envp;
+		value = name + strlen(name) + 1;
+		var = extract(*envp, 0, (int)strlen(command.args[1]) - 1);
+		if (strcmp(var, command.args[1]) == 0)
 		{
-			if (prev)
-				*prev = *envp;
-			free(*envp);
-			*envp = NULL;
-			found = 1;
-			break;
+			*envp = value;
+			command.status = 0;
+			return (0);
 		}
-		prev = envp;
 		envp++;
 	}
+	command.status = -1;
 
-	return found;
+	return (get_error(command.args, command.status, command.counter));
 }

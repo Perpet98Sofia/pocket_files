@@ -5,7 +5,7 @@
  * @cmd: command
  * Return: function of the builtin command
  */
-int get_builtin(char *cmd, char **args, char *env[])
+int get_builtin(data_shell command)
 {
 	builtin_t builtins[] = {
 		{ "env", builtin_env },  { "help", get_help },
@@ -18,23 +18,29 @@ int get_builtin(char *cmd, char **args, char *env[])
 
 	for (i = 0; builtins[i].name; i++)
 	{
-		if (_strcmp(builtins[i].name, args[0]) == 0)
-			return (builtins[i].f(args, env));
+		if (_strcmp(builtins[i].name, command.args[0]) == 0)
+			return (builtins[i].f(command));
 	}
 
-	return (execute(cmd, args, env));
+	return (execute(command));
 }
 
-int cd_shell(char **args, char *env[])
+void update_value(data_shell command, char *varname, char *value)
 {
-	UNUSED(args);
-	UNUSED(env);
-	return (0);
+	int k;
+
+    command.av[0] = _strdup(varname);
+    command.av[1] = _strdup(value);
+	command.av[2] = NULL;
+
+    built_in_setenv(command);
+
+	for (k = 0; command.av[k] != NULL; k++)
+        free(command.av[k]);
 }
 
-int get_help(char **args, char *env[])
+int get_help(data_shell command)
 {
-	UNUSED(args);
-	UNUSED(env);
+	UNUSED(command);
 	return (0);
 }

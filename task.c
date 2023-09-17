@@ -11,12 +11,13 @@
 int main(int ac, char **av, char *env[])
 {
 	size_t buf_size = 0;
-	char *args[MAX_ARGS], *command = NULL;
-	int is_interact = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)), i;
+	char *command;
+	data_shell data;
+	int is_interact = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)), i = 0;
 
 	UNUSED(ac);
 	UNUSED(av);
-	UNUSED(env);
+	data.counter = 0;
 	while (1)
 	{
 		fflush(stdout);
@@ -30,18 +31,16 @@ int main(int ac, char **av, char *env[])
 		}
 		if (_strlen(command) == 1)
 			continue;
-		i = 0;
-
-		args[i] = strtok(command, " \n");
-		while (args[i] != NULL)
+		data.input = _strdup(command);
+		data.counter++;
+		while (env[i] != NULL)
 		{
+			data._environ[i] = _strdup(env[i]);
 			i++;
-			args[i] = strtok(NULL, " \n");
 		}
-		args[i] = NULL;
-
-		command[_strlen(command)] = '\0';
-		get_builtin(command, args, env);
+		data._environ[i] = NULL;
+		split_commands(&data, data.input);
+		free(data.input);
 	}
 
 	return (0);
@@ -55,29 +54,29 @@ int main(int ac, char **av, char *env[])
  *
  * Return: 0 for success, -1 for failure
  */
-int execute(char *command, char **args, char *envp[])
+int execute(data_shell command)
 {
 	pid_t pid;
 	int status, found = 0;
 	char *exec, *abs_cmd;
 
-	if (access(args[0], X_OK) == 0)
+	if (access(command.args[0], X_OK) == 0)
 		found = 1;
 	else
 	{
-		exec = find_executable(args[0], envp);
+		exec = find_executable(command.args[0], command._environ);
 		if (exec)
 		{
 			found = 1;
-			abs_cmd = make_cmd(command, exec);
-			args[0] = _strdup(abs_cmd);
+			abs_cmd = make_cmd(command.input, exec);
+			command.args[0] = _strdup(abs_cmd);
 		}
 	}
 	if (found == 1)
 	{
-		pid = fork();  /* Fork a new process */
+		pid = fork(); /* Fork a new process */
 		if (pid == 0)
-			return (execve(args[0], args, NULL));
+			return (execve(command.args[0], command.args, command._environ));
 		else if (pid > 0) /* Wait for the child process to complete */
 			waitpid(pid, &status, 0);
 		else
@@ -85,8 +84,8 @@ int execute(char *command, char **args, char *envp[])
 	}
 	else
 	{
-		perror("./hsh: 1");
-		exit(127);
+		command.status = 127;
+		get_error(command.args, command.status, command.counter);
 	}
 	return (0);
 }
