@@ -72,12 +72,12 @@ void add_nodes(sep_list **head_s, line_list **head_l, char *input)
 	}
 
 	line = strtok(input, ";|&");
-	do {
+	do
+	{
 		line = swap_char(line, 1);
 		add_line_node_end(head_l, line);
 		line = strtok(NULL, ";|&");
 	} while (line != NULL);
-
 }
 
 /**
@@ -156,13 +156,11 @@ int split_commands(data_shell *datash, char *input)
 		loop = execute(*datash);
 		free(datash->args);
 
-		if (loop == 0)
-			break;
-
 		go_next(&list_s, &list_l, datash);
 
-		if (list_l != NULL)
-			list_l = list_l->next;
+		if (loop == 0 && list_l->next == NULL)
+			break;
+		list_l = list_l->next;
 	}
 
 	free_sep_list(&head_s);
