@@ -13,7 +13,7 @@ int main(int ac, char **av, char *env[])
 	size_t buf_size = 0;
 	char *command;
 	data_shell data;
-	int is_interact = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)), i = 0;
+	int is_interact = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)), i = 0, k = 0;
 
 	UNUSED(ac);
 	UNUSED(av);
@@ -39,6 +39,8 @@ int main(int ac, char **av, char *env[])
 			i++;
 		}
 		data._environ[i] = NULL;
+		for (; k < MAX_ARGS; k++)
+			data.av[k] = NULL;
 		split_commands(&data, data.input);
 		free(data.input);
 	}

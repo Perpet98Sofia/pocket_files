@@ -38,7 +38,6 @@ typedef struct data
 	int status;
 	int counter;
 	char *_environ[MAX_COMMAND_LENGTH];
-	char *pid;
 } data_shell;
 
 /**
