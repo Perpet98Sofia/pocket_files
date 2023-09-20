@@ -37,13 +37,13 @@ char *_strdup(char *str)
 		return (NULL);
 
 	len = _strlen(str) + 1;
-	duplicate_str = malloc(len);
+	duplicate_str = malloc(sizeof(char) * len);
 	if (duplicate_str == NULL)
 		return (NULL);
 
 	/**
 	 * Iterate over each character in the string
-	 * and copy it to the duplicate string
+	 * and copy it to the duplicate_str
 	 */
 	for (i = 0; i < len; i++)
 		duplicate_str[i] = str[i];

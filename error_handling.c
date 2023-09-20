@@ -9,33 +9,31 @@
  * @ver_str: counter lines
  * Return: error message
  */
-char *strcat_cd(char **args, char *cmd, char *msg, char *error, char *ver_str)
+char *strcat_cd(char **args, char *msg, char *error, char *ver_str)
 {
 	char *illegal_flag;
 
-	_strcpy(error, cmd);
-	_strcat(error, ": ");
-	_strcat(error, ver_str);
-	_strcat(error, ": ");
-	_strcat(error, args[0]);
-	_strcat(error, msg);
-	
+	_strcpy(error, "./hsh");
+	_strncat(error, ": ", 2);
+	_strncat(error, ver_str, _strlen(ver_str));
+	_strncat(error, ": ", 2);
+	_strncat(error, args[0], _strlen(args[0]));
+	_strncat(error, msg, _strlen(msg));
+
 	if (args[1][0] == '-')
 	{
 		illegal_flag = malloc(3);
 		illegal_flag[0] = '-';
 		illegal_flag[1] = args[1][1];
 		illegal_flag[2] = '\0';
-		_strcat(error, illegal_flag);
+		_strncat(error, illegal_flag, _strlen(illegal_flag));
 		free(illegal_flag);
 	}
 	else
-	{
-		_strcat(error, args[1]);
-	}
+		_strncat(error, args[1], _strlen(args[1]));
 
-	_strcat(error, "\n");
-	_strcat(error, "\0");
+	_strncat(error, "\n", 1);
+	_strncat(error, "\0", 1);
 	return (error);
 }
 
@@ -46,7 +44,6 @@ char *strcat_cd(char **args, char *cmd, char *msg, char *error, char *ver_str)
  * @cmd: name or command associated with the error
  * Return: Error message
  */
-
 char *error_get_cd(char **args, char *cmd, int counter)
 {
 	int length, len_id;
@@ -68,16 +65,12 @@ char *error_get_cd(char **args, char *cmd, int counter)
 	length = _strlen(cmd) + _strlen(args[0]);
 	length += _strlen(ver_str) + _strlen(msg) + len_id + 5;
 	error = malloc(sizeof(char) * (length + 1));
-
 	if (error == NULL) /* Change error check from '0' to 'NULL' for clarity. */
 	{
 		free(ver_str);
 		return (NULL);
 	}
-
-	error = strcat_cd(args, cmd, msg, error, ver_str);
-
-	free(ver_str);
+	strcat_cd(args, msg, error, ver_str);
 
 	return (error);
 }
@@ -106,12 +99,12 @@ char *error_not_found(char **args, char *cmd, int counter)
 	}
 
 	_strcpy(error, "./hsh");
-	_strcat(error, ": ");
-	_strcat(error, ver_str);
-	_strcat(error, ": ");
-	_strcat(error, args[0]);
-	_strcat(error, ": not found\n");
-	_strcat(error, "\0");
+	_strncat(error, ": ", 2);
+	_strncat(error, ver_str, _strlen(ver_str));
+	_strncat(error, ": ", 2);
+	_strncat(error, args[0], _strlen(args[0]));
+	_strncat(error, ": not found\n", 12);
+	_strncat(error, "\0", 1);
 
 	free(ver_str);
 
@@ -141,14 +134,15 @@ char *error_exit_shell(char **args, char *cmd, int counter)
 		return (NULL);
 	}
 
-	_strcpy(error, cmd);
-	_strcat(error, ": ");
-	_strcat(error, ver_str);
-	_strcat(error, ": ");
-	_strcat(error, args[0]);
-	_strcat(error, ": Illegal number: ");
-	_strcat(error, args[1]);
-	_strcat(error, "\n\0");
+	_strcpy(error, "./hsh");
+	_strncat(error, ": ", 2);
+	_strncat(error, ver_str, _strlen(ver_str));
+	_strncat(error, ": ", 2);
+	_strncat(error, args[0], _strlen(args[0]));
+	_strncat(error, ": Illegal number: ", 19);
+	_strncat(error, args[1], _strlen(args[1]));
+	_strncat(error, "\n", 1);
+	_strncat(error, "\0", 1);
 
 	free(ver_str);
 
@@ -174,20 +168,20 @@ char *error_env(char **args, char *cmd, int counter)
 	length = _strlen(cmd) + _strlen(ver_str) + _strlen(args[0]) + _strlen(msg) + 4;
 	error = malloc(sizeof(char) * (length + 1));
 
-	if (error == NULL)  /* Using NULL for clarity instead of '0'. */
+	if (error == NULL) /* Using NULL for clarity instead of '0'. */
 	{
 		/* If error is NULL (malloc failed), there's no need to free it. */
 		free(ver_str);
 		return (NULL);
 	}
 
-	_strcpy(error, cmd);
-	_strcat(error, ": ");
-	_strcat(error, ver_str);
-	_strcat(error, ": ");
-	_strcat(error, args[0]);
-	_strcat(error, msg);
-	_strcat(error, "\0");
+	_strcpy(error, "./hsh");
+	_strncat(error, ": ", 2);
+	_strncat(error, ver_str, _strlen(ver_str));
+	_strncat(error, ": ", 2);
+	_strncat(error, args[0], _strlen(args[0]));
+	_strncat(error, msg, _strlen(msg));
+	_strncat(error, "\0", 1);
 
 	free(ver_str);
 
@@ -220,13 +214,13 @@ char *error_path_126(char **args, char *cmd, int counter)
 		return (NULL);
 	}
 
-	_strcpy(error, cmd);
-	_strcat(error, ": ");
-	_strcat(error, ver_str);
-	_strcat(error, ": ");
-	_strcat(error, args[0]);
-	_strcat(error, ": Permission denied\n");
-	_strcat(error, "\0");
+	_strcpy(error, "./hsh");
+	_strncat(error, ": ", 2);
+	_strncat(error, ver_str, _strlen(ver_str));
+	_strncat(error, ": ", 2);
+	_strncat(error, args[0], _strlen(args[0]));
+	_strncat(error, ": Permission denied\n", 24);
+	_strncat(error, "\0", 1);
 
 	free(ver_str);
 
@@ -247,21 +241,24 @@ int get_error(char **args, int eval, int counter)
 
 	switch (eval)
 	{
-		case -1:
-			error = error_env(args, args[0], counter);
-			break;
-		case 126:
-			error = error_path_126(args, args[0], counter);
-			break;
-		case 127:
-			error = error_not_found(args, args[0], counter);
-			break;
-		case 2:
-			if (_strcmp("exit", args[0]) == 0)
-				error = error_exit_shell(args, args[0], counter);
-			else if (_strcmp("cd", args[0]) == 0)
-				error = error_get_cd(args, args[0], counter);
-			break;
+	case -1:
+		error = error_env(args, args[0], counter);
+		break;
+	case 126:
+		error = error_path_126(args, args[0], counter);
+		break;
+	case 127:
+		error = error_not_found(args, args[0], counter);
+		break;
+	case 2:
+		if (_strcmp("exit", args[0]) == 0)
+			error = error_exit_shell(args, args[0], counter);
+		else if (_strcmp("cd", args[0]) == 0)
+			error = error_get_cd(args, args[0], counter);
+		break;
+	default:
+		write(STDERR_FILENO, " :Unknown error code\n", 22);
+		break;
 	}
 
 	if (error)
