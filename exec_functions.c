@@ -57,25 +57,25 @@ char *find_executable(char *command, char **envp)
  *
  * Return: The command built n char*
  */
-char *make_cmd(char *entry, char *exec)
+char *make_cmd(data_shell cmd, char *exec)
 {
 	int i = 0, j = 0;
-	char *arg, *res;
+	char *res;
 
 	res = malloc(sizeof(char) * MAX_COMMAND_LENGTH);
 	if (res == NULL)
 		return (NULL);
-	arg = _strrchr(entry, ' ');
 	while (exec[i])
 	{
 		res[i] = exec[i];
 		i++;
 	}
-	if (arg)
+	if (cmd.args[1])
 	{
-		while (arg[j])
+		res[i++] = ' ';
+		while (cmd.args[1][j])
 		{
-			res[i + j] = arg[j];
+			res[i + j] = cmd.args[1][j];
 			j++;
 		}
 	}

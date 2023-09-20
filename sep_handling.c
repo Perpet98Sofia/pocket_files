@@ -62,8 +62,10 @@ void add_nodes(sep_list **head_s, line_list **head_l, char *input)
 	for (i = 0; input[i]; i++)
 	{
 		if (input[i] == ';')
+		{
 			add_sep_node_end(head_s, input[i]);
-
+			i++;
+		}
 		if (input[i] == '|' || input[i] == '&')
 		{
 			add_sep_node_end(head_s, input[i]);
@@ -147,14 +149,10 @@ int split_commands(data_shell *datash, char *input)
 	while (list_l != NULL)
 	{
 		datash->input = _strdup(list_l->line);
-		datash->args = split_line(datash->input);
+		split_line(datash->args, datash->input);
 		if (get_builtin(*datash) == 0)
-		{
-			free(datash->args);
 			break;
-		}
 		loop = execute(*datash);
-		free(datash->args);
 
 		go_next(&list_s, &list_l, datash);
 
@@ -177,39 +175,16 @@ int split_commands(data_shell *datash, char *input)
  * @input: input string.
  * Return: string splitted.
  */
-char **split_line(char *input)
+void split_line(char **tokens, char *input)
 {
-	size_t bsize;
-	size_t i;
-	char **tokens;
-	char *token;
+    char *token;
 
-	bsize = BUFFER_SIZE;
-	tokens = malloc(sizeof(char *) * (bsize));
-	if (tokens == NULL)
-	{
-		write(STDERR_FILENO, ": allocation error\n", 18);
-		exit(EXIT_FAILURE);
-	}
-
-	token = strtok(input, TOK_DELIM);
-	tokens[0] = token;
-
-	for (i = 1; token != NULL; i++)
-	{
-		if (i == bsize)
-		{
-			bsize += BUFFER_SIZE;
-			tokens = _reallocdp(tokens, i, sizeof(char *) * bsize);
-			if (tokens == NULL)
-			{
-				write(STDERR_FILENO, ": allocation error\n", 18);
-				exit(EXIT_FAILURE);
-			}
-		}
-		token = strtok(NULL, TOK_DELIM);
-		tokens[i] = token;
-	}
-
-	return (tokens);
+    token = strtok(input, TOK_DELIM);
+    while (token != NULL)
+    {
+        *tokens = strdup(token);
+        token = strtok(NULL, TOK_DELIM);
+        tokens++;
+    }
+    *tokens = NULL;
 }

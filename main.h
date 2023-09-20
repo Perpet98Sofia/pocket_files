@@ -34,10 +34,11 @@ typedef struct data
 {
 	char *av[MAX_ARGS];
 	char *input;
-	char **args;
+	char *args[MAX_ARGS];
 	int status;
 	int counter;
 	char *_environ[MAX_COMMAND_LENGTH];
+	pid_t pid;
 } data_shell;
 
 /**
@@ -116,9 +117,10 @@ char *error_get_cd(char **args, char *cmd, int counter);
 char *strcat_cd(char **args, char *cmd, char *msg,
 				char *error, char *ver_str);
 int split_commands(data_shell *datash, char *input);
-char **split_line(char *input);
+void split_line(char **tokens, char *input);
 
 char *aux_itoa(int i);
+void get_sigint(int sig);
 
 sep_list *add_sep_node_end(sep_list **head, char sep);
 void free_sep_list(sep_list **head);
@@ -130,9 +132,11 @@ void free_rvar_list(r_var **head);
 void _memcpy(void *newptr, const void *ptr, unsigned int size);
 char **_reallocdp(char **ptr, unsigned int old_size, unsigned int new_size);
 
+void free_data(data_shell *datash);
+void set_data(data_shell *datash, char **av, char **environ);
+
 char *find_cmd(const char *buffer);
 char *find_executable(char *command, char **envp);
-char *make_cmd(char *entry, char *exec);
 int _strncmp(char *s1, char *s2, int n);
 char *_strdup(char *str);
 int _strcmp(char *s1, char *s2);
@@ -145,7 +149,7 @@ char *_strcat(char *dest, char *src);
 int execute(data_shell command);
 
 char *trim(char *str);
-char *make_cmd(char *entry, char *exec);
+char *make_cmd(data_shell cmd, char *exec);
 void free_all(char *strng, char *strg);
 char *_strrchr(char *str, int c);
 int _strncmp(char *s1, char *s2, int n);

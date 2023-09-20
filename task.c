@@ -1,6 +1,16 @@
 #include "main.h"
 
 /**
+ * get_sigint - Handle the crtl + c call in prompt
+ * @sig: Signal handler
+ */
+void get_sigint(int sig)
+{
+	(void)sig;
+	write(STDOUT_FILENO, "\n^-^ ", 5);
+}
+
+/**
  * main - Entry point
  * @ac: Arguments count
  * @av: Arguments
@@ -13,11 +23,11 @@ int main(int ac, char **av, char *env[])
 	size_t buf_size = 0;
 	char *command;
 	data_shell data;
-	int is_interact = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)), i = 0, k = 0;
+	int is_interact = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)), k = 0;
 
 	UNUSED(ac);
-	UNUSED(av);
-	data.counter = 0;
+	set_data(&data, av, env);
+	signal(SIGINT, get_sigint);
 	while (1)
 	{
 		fflush(stdout);
@@ -32,20 +42,16 @@ int main(int ac, char **av, char *env[])
 		if (_strlen(command) == 1)
 			continue;
 		data.input = _strdup(command);
-		data.counter++;
-		while (env[i] != NULL)
-		{
-			data._environ[i] = _strdup(env[i]);
-			i++;
-		}
-		data._environ[i] = NULL;
 		for (; k < MAX_ARGS; k++)
 			data.av[k] = NULL;
 		split_commands(&data, data.input);
+		data.counter++;
 		free(data.input);
 	}
-
-	return (0);
+	free_data(&data);
+	if (data.status < 0)
+		return (255);
+	return (data.status);
 }
 
 /**
@@ -58,7 +64,6 @@ int main(int ac, char **av, char *env[])
  */
 int execute(data_shell command)
 {
-	pid_t pid;
 	int status, found = 0;
 	char *exec, *abs_cmd;
 
@@ -70,17 +75,20 @@ int execute(data_shell command)
 		if (exec)
 		{
 			found = 1;
-			abs_cmd = make_cmd(command.input, exec);
+			abs_cmd = make_cmd(command, exec);
 			command.args[0] = _strdup(abs_cmd);
 		}
 	}
 	if (found == 1)
 	{
-		pid = fork(); /* Fork a new process */
-		if (pid == 0)
+		command.pid = fork(); /* Fork a new process */
+		if (command.pid == 0)
+		{
+			command.status = 0;
 			return (execve(command.args[0], command.args, command._environ));
-		else if (pid > 0) /* Wait for the child process to complete */
-			waitpid(pid, &status, 0);
+		}
+		else if (command.pid > 0) /* Wait for the child process to complete */
+			waitpid(command.pid, &status, 0);
 		else
 			perror("./hsh: 0");
 	}
