@@ -4,7 +4,7 @@
 #define MAX_COMMAND_LENGTH 100
 #define MAX_ARGS 10
 #define BUFFER_SIZE 1024
-#define TOK_DELIM " \n"
+#define TOK_DELIM " \t\r\a\n"
 
 #include <stdio.h>
 #include <stdlib.h>
