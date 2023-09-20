@@ -6,8 +6,8 @@
  */
 void get_sigint(int sig)
 {
-	(void)sig;
-	write(STDOUT_FILENO, "\n^-^ ", 5);
+	if (sig == SIGINT)
+		write(STDOUT_FILENO, "\n\\_(^-^)_/ ", 5);
 }
 
 /**
@@ -74,7 +74,7 @@ int execute(data_shell command)
 		if (exec)
 		{
 			found = 1;
-			command.args[0] = strdup(exec);
+			command.args[0] = _strdup(exec);
 		}
 	}
 	if (found == 1)
