@@ -114,8 +114,7 @@ char *error_env(char **args, char *cmd, int counter);
 char *error_exit_shell(char **args, char *cmd, int counter);
 char *error_not_found(char **args, char *cmd, int counter);
 char *error_get_cd(char **args, char *cmd, int counter);
-char *strcat_cd(char **args, char *cmd, char *msg,
-				char *error, char *ver_str);
+char *strcat_cd(char **args, char *msg, char *error, char *ver_str);
 int split_commands(data_shell *datash, char *input);
 void split_line(char **tokens, char *input);
 
@@ -148,6 +147,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 void free_double_ptr(char **str);
 char *_strcat(char *dest, char *src);
+char *_strncat(char *dest, char *src, int n);
 
 int execute(data_shell command);
 

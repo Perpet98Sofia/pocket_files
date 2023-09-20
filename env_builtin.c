@@ -28,14 +28,14 @@ int built_in_setenv(data_shell command)
 		new_var = malloc(strlen(varname) + strlen(value) + 2);
 		if (new_var == NULL)
 			return (-1);
-		strcpy(new_var, varname);
-		strcat(new_var, "=");
-		strcat(new_var, value);
+		_strcpy(new_var, varname);
+		_strcat(new_var, "=");
+		_strcat(new_var, value);
 		/* Append the new entry to the environment variables */
 		*end_env = malloc(sizeof(char *) * (size_t)(sizeof(end_env) + 1));
 		if (*end_env == NULL)
 			return (-1);
-		*end_env = strdup(new_var);
+		*end_env = _strdup(new_var);
 		end_env++;
 		*end_env = NULL;
 		return (0);

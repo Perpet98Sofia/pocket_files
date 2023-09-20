@@ -46,7 +46,6 @@ int main(int ac, char **av, char *env[])
 			data.av[k] = NULL;
 		split_commands(&data, data.input);
 		data.counter++;
-		free(data.input);
 	}
 	free_data(&data);
 	if (data.status < 0)
@@ -64,40 +63,40 @@ int main(int ac, char **av, char *env[])
  */
 int execute(data_shell command)
 {
-    int status, found = 0;
-    char *exec;
+	int status, found = 0;
+	char *exec;
 
-    if (access(command.args[0], X_OK) == 0)
-        found = 1;
-    else
-    {
-        exec = find_executable(command.args[0], command._environ);
-        if (exec)
-        {
-            found = 1;
-            command.args[0] = strdup(exec);
-        }
-    }
-    if (found == 1)
-    {
-        command.pid = fork(); /* Fork a new process */
-        if (command.pid == 0)
-        {
-            command.status = 0;
-            return (execve(command.args[0], command.args, command._environ));
-        }
-        else if (command.pid > 0) /* Wait for the child process to complete */
-        {
-            waitpid(command.pid, &status, 0);
-            command.status = WEXITSTATUS(status);
-        }
-        else
-            perror("./hsh: 0");
-    }
-    else
-    {
-        command.status = 127;
+	if (access(command.args[0], X_OK) == 0)
+		found = 1;
+	else
+	{
+		exec = find_executable(command.args[0], command._environ);
+		if (exec)
+		{
+			found = 1;
+			command.args[0] = strdup(exec);
+		}
+	}
+	if (found == 1)
+	{
+		command.pid = fork(); /* Fork a new process */
+		if (command.pid == 0)
+		{
+			command.status = 0;
+			return (execve(command.args[0], command.args, command._environ));
+		}
+		else if (command.pid > 0) /* Wait for the child process to complete */
+		{
+			waitpid(command.pid, &status, 0);
+			command.status = WEXITSTATUS(status);
+		}
+		else
+			perror("./hsh: 0");
+	}
+	else
+	{
+		command.status = 127;
 		get_error(command.args, command.status, command.counter);
-    }
-    return (0);
+	}
+	return (0);
 }
