@@ -28,17 +28,17 @@
  * @status: last status of the shell
  * @counter: lines counter
  * @_environ: environment variable
- * @pid: process ID of the shell
+ * @pid: process id
  */
 typedef struct data
 {
-	char *av[MAX_ARGS];
-	char *input;
-	char *args[MAX_ARGS];
-	int status;
-	int counter;
-	char *_environ[MAX_COMMAND_LENGTH];
-	pid_t pid;
+    char *av[MAX_ARGS];
+    char *input;
+    char *args[MAX_ARGS];
+    int status;
+    int counter;
+    char *_environ[MAX_COMMAND_LENGTH];
+    pid_t pid;
 } data_shell;
 
 /**
@@ -134,6 +134,9 @@ char **_reallocdp(char **ptr, unsigned int old_size, unsigned int new_size);
 
 void free_data(data_shell *datash);
 void set_data(data_shell *datash, char **av, char **environ);
+char *swap_char(char *input, int bool);
+void add_nodes(sep_list **head_s, line_list **head_l, char *input);
+void go_next(sep_list **list_s, line_list **list_l, data_shell *datash);
 
 char *find_cmd(const char *buffer);
 char *find_executable(char *command, char **envp);
@@ -149,12 +152,13 @@ char *_strcat(char *dest, char *src);
 int execute(data_shell command);
 
 char *trim(char *str);
-char *make_cmd(data_shell cmd, char *exec);
 void free_all(char *strng, char *strg);
 char *_strrchr(char *str, int c);
 int _strncmp(char *s1, char *s2, int n);
 int _strlen(char *s);
 int is_digit(char c);
 int is_number(char *c);
+
+char *make_cmd(data_shell cmd, char *exec);
 
 #endif
