@@ -27,19 +27,21 @@ void set_data(data_shell *datash, char **av, char **environ)
 {
     unsigned int i = 0;
 
-    while (i < MAX_ARGS)
+    if (av)
     {
-        if (av[i])
+        for (; av[i]; i++)
             datash->av[i] = av[i];
-        i++;
     }
-    i = 0;
+    else
+    {
+        for (; i < MAX_ARGS; i++)
+            datash->av[i] = NULL;
+    }
     while (i < MAX_ARGS)
     {
         datash->args[i] = NULL;
         i++;
     }
-    datash->input = NULL;
     datash->status = 0;
     datash->counter = 1;
 
@@ -50,7 +52,8 @@ void set_data(data_shell *datash, char **av, char **environ)
 
     for (i = 0; environ[i]; i++)
         datash->_environ[i] = _strdup(environ[i]);
+    for (; i < 100; i++)
+        datash->_environ[i] = NULL;
 
-    datash->_environ[i] = NULL;
     datash->pid = getpid();
 }
