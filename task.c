@@ -12,45 +12,53 @@ void get_sigint(int sig)
 
 /**
  * main - Entry point
- * @ac: Arguments count
- * @av: Arguments
+ * @ac: Args count
+ * @av: Args
  * @env: Environment
  *
- * Return: Always 0
+ * Return: 0 on success, -1 on failure
  */
 int main(int ac, char **av, char *env[])
 {
+	int is_interact = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)), status;
 	size_t buf_size = 0;
-	char *command;
-	data_shell data;
-	int is_interact = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO)), k = 0;
+	pid_t pid;
+	char *args[] = {"", NULL}, *command, *buffer = NULL;
 
+	UNUSED(av);
 	UNUSED(ac);
-	set_data(&data, av, env);
-	signal(SIGINT, get_sigint);
 	while (1)
 	{
-		fflush(stdout);
 		if (is_interact)
-			printf("$ "); /* Display the prompt */
-		if (getline(&command, &buf_size, stdin) == -1)
+			printf("$ "), fflush(stdout);
+		if (getline(&buffer, &buf_size, stdin) == -1)
+			break;
+		if (buffer[0] != '\n')
 		{
-			if (feof(stdin))
+			if (buffer[strlen(buffer) - 1] == '\n')
+				buffer[strlen(buffer) - 1] = '\0';
+			command = removeSpaces(buffer);
+			if (command)
+			{
+				pid = fork();
+				if (pid == 0)
+				{
+					args[0] = command;
+					if (execve(command, args, env) == -1)
+					{
+						free(command);
+						perror("./shell");
+						exit(1);
+					}
+				}
+				else if (pid > 0)
+					waitpid(pid, &status, 0);
 				free(command);
-			break; /* Handle Ctrl+D (End of file) */
+			}
 		}
-		if (_strlen(command) == 1)
-			continue;
-		data.input = _strdup(command);
-		for (; k < MAX_ARGS; k++)
-			data.av[k] = NULL;
-		split_commands(&data, data.input);
-		data.counter++;
 	}
-	free_data(&data);
-	if (data.status < 0)
-		return (255);
-	return (data.status);
+	free(buffer);
+	return (0);
 }
 
 /**
@@ -99,4 +107,39 @@ int execute(data_shell command)
 		get_error(command.args, command.status, command.counter);
 	}
 	return (0);
+}
+
+/**
+ * removeSpaces - removes spaces from a stirng
+ * @strng: the string to remove in
+ *
+ * Return: new string
+*/
+char *removeSpaces(char *strng)
+{
+	int i = 0, j = 0;
+	char *buf;
+
+	if (strng == NULL)
+		return (NULL);
+
+	buf = malloc(strlen(strng) + 1);
+	if (buf == NULL)
+		return (NULL);
+
+	while (strng[i] != '\0')
+	{
+		if (strng[i] != ' ')
+		{
+			buf[j] = strng[i];
+			j++;
+		}
+		i++;
+	}
+	buf[j] = '\0';
+
+	if (_strlen(buf) > 0)
+		return (buf);
+
+	return (NULL);
 }

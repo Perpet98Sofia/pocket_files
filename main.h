@@ -150,6 +150,7 @@ char *_strcat(char *dest, char *src);
 char *_strncat(char *dest, char *src, int n);
 
 int execute(data_shell command);
+char *removeSpaces(char *strng);
 
 char *trim(char *str);
 void free_all(char *strng, char *strg);
