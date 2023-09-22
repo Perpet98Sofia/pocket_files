@@ -5,7 +5,8 @@
  */
 int built_in_setenv(data_shell command)
 {
-	char **end_env = find_end_env(command._environ), *varname = NULL, *value = NULL;
+	char **end_env = find_end_env(command._environ);
+	char *varname = NULL, *value = NULL;
 	char **var = command._environ, *new_var, *var_cpy;
 
 	if ((varname = command.av[0]) && (value = command.av[1]))
